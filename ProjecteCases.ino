@@ -1,4 +1,4 @@
-// Programa creat per Doctor Bit (drBit.nl) per a CasaNines
+// Programa creat per Doctor Bit (www.drBit.nl) per a ProjecteCases
 
 #include <Adafruit_NeoPixel.h>
 

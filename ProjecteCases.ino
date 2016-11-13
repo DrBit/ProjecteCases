@@ -31,29 +31,29 @@ byte counterByte1=0;
 const int numberOfPixels = 20;
 //Adafruit_NeoPixel pixels = Adafruit_NeoPixel(numberOfPixels, pixelsPIN);
 Adafruit_NeoPixel pixels = Adafruit_NeoPixel(numberOfPixels, pixelsPIN, NEO_GRB + NEO_KHZ800);
-#define numberOfSteps 14
+#define numberOfSteps 15
 int timeActions [numberOfSteps][3] = {
 	//{minuts,segons,milisegons}
-	{2,36,0},		// Time Action 0 (duration)
+	{9,05,0},		// Time Action 0 (duration)
 
 
-	{0,12,0},		// Time Action 1 - Llum llit fade fast.
+	{0,13,0},		// Time Action 1 - Llum llit fade fast.
 	//----------------------------------------------------
-	{0,17,0},		// Time Action 2 - Llum baix flaix on
-	{0,17,50},		// Time Action 3 - Llum baix flaix off
-	{0,17,400},		// Time Action 4 - Llum baix flaix on
-	{0,17,500},		// Time Action 5 - Llum baix flaix off
-	{0,17,700},		// Time Action 6 - Llum baix flaix on
-	{0,17,800},		// Time Action 7 - Llum baix flaix off
-	{0,18,300},		// Time Action 8 - Llum baix fade in 4s
+	{0,38,0},		// Time Action 2 - Llum baix flaix on
+	{0,38,50},		// Time Action 3 - Llum baix flaix off
+	{0,38,400},		// Time Action 4 - Llum baix flaix on
+	{0,38,500},		// Time Action 5 - Llum baix flaix off
+	{0,38,700},		// Time Action 6 - Llum baix flaix on
+	{0,38,800},		// Time Action 7 - Llum baix flaix off
+	{0,39,300},		// Time Action 8 - Llum baix fade in 4s
 	//----------------------------------------------------
 	
-	{0,37,0},		// Time Action 9 - 2 focos blancs ON DALT
-	{0,45,0},		// Time Action 10 - tots focos DALT vermells (fade 3s)
-	{1,10,0},		// Time Action 11 - FX 1
-	{1,40,0},		// Time Action 12 - FX 2
-	{2,05,0},		// Time Action 13 - final FX
-	//{1,10,0},		// Time Action 14
+	{2,01,0},		// Time Action 9 - 2 focos blancs ON DALT
+	{2,33,0},		// Time Action 10 - tots focos DALT vermells (fade 3s)
+	{3,49,0},		// Time Action 11 - FX 1
+	{3,59,0},		// Time Action 12 - FX 2
+	{4,25,0},		// Time Action 13 - final FX
+	{9,00,0},		// Time Action 14
 };
 
 
@@ -188,6 +188,8 @@ void executeAllCurrentSteps (int currentStep) {
 		uint32_t color_baix = pixels.Color(255, 100, 10);
 		uint32_t color_blanc_dalt = pixels.Color(255, 255, 255);
 		uint32_t color_vermell_dalt = pixels.Color(255, 0, 0);
+		uint32_t no_color = pixels.Color(0, 0, 0);
+
 
 
 		if (currentStep >=0 & !stepdone[0]) {			// Action 0 (from the beginning)
@@ -302,6 +304,23 @@ void executeAllCurrentSteps (int currentStep) {
 			a = a + fadeTo (5,color_vermell_dalt,1);
 			a = a + fadeTo (6,color_vermell_dalt,1);
 			if (a == 7) stepdone[thisStep] = true;
+		}
+
+				//{1,05,0},		// Time Action 13 - final FX */
+		thisStep = 14;
+		if (currentStep >= thisStep & !stepdone[thisStep]) {		// Time Action 8 - Llum baix fade in 4s
+			//stepdone[13] = true;
+			Serial.print ("action "); Serial.println (thisStep);			
+			int a = fadeTo (0,no_color,30);
+			a = a + fadeTo (1,no_color,30);
+			a = a + fadeTo (2,no_color,30);
+			a = a + fadeTo (3,no_color,30);
+			a = a + fadeTo (4,no_color,30);
+			a = a + fadeTo (5,no_color,30);
+			a = a + fadeTo (6,no_color,30);
+			a = a + fadeTo (7,no_color,30);
+			a = a + fadeTo (8,no_color,30);
+			if (a == 9) stepdone[thisStep] = true;
 		}
 
 		//----------------------------------------------------

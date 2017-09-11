@@ -1,4 +1,37 @@
-// Programa creat per Doctor Bit (www.drBit.nl) per a ProjecteCases
+/*
+
+  DrBit.ln
+
+  Projecte Cases. (Casa 1)
+
+  created 13 Jun 2016
+  modified 24 Aug 2017
+  by DrBit
+
+  This project is part of an art piece called "Projecte cases". The project is a theater play that 
+  involves 2 persons (as public) and an miniature house. The public will be presented with a narrative
+  sound track and the track itself will call for interaction with the house.
+  This will be acomplished through the same audience's own actions togeteher with visual effects and
+  sensors and automations triggered by this piece of software.
+
+
+This project contains parts of code from the following sources:
+
+----------------------------------------
+Adafruit NeoPixel Library
+
+https://github.com/adafruit/Adafruit_NeoPixel
+
+Arduino library for controlling single-wire-based LED pixels and strip such as the Adafruit 
+60 LED/meter Digital LED strip, the Adafruit FLORA RGB Smart Pixel, the Adafruit Breadboard-friendly 
+RGB Smart Pixel, the Adafruit NeoPixel Stick, and the Adafruit NeoPixel Shield.
+
+Compatibility notes: Port A is not supported on any AVR processors at this time
+This project uses neopixels with 3 channels only (RGB)
+
+
+*/
+
 
 #include <Adafruit_NeoPixel.h>
 
@@ -9,7 +42,11 @@
 #define relay2 5
 #define relay3 6
 #define debugLed1 13
+
 #define pixelsPIN 8
+#define BRIGHTNESS 255
+#define NUM_LEDS 20
+
 int playButton = relay2;
 int stopButton = relay1;
 int mist = relay3; 
@@ -28,13 +65,11 @@ uint8_t  mode   = 0, // Current animation effect
          offset = 0; // Position of spinny eyes
 int counterInt1 = 0;
 byte counterByte1=0;
-const int numberOfPixels = 20;
-//Adafruit_NeoPixel pixels = Adafruit_NeoPixel(numberOfPixels, pixelsPIN);
-Adafruit_NeoPixel pixels = Adafruit_NeoPixel(numberOfPixels, pixelsPIN, NEO_GRB + NEO_KHZ800);
-#define numberOfSteps 15
+Adafruit_NeoPixel pixels = Adafruit_NeoPixel(NUM_LEDS, pixelsPIN, NEO_GRB + NEO_KHZ800);
+#define numberOfSteps 15s
 int timeActions [numberOfSteps][3] = {
 	//{minuts,segons,milisegons}
-	{9,05,0},		// Time Action 0 (duration)
+	{9,05,0},		// Time Action 0 (track duration)
 
 
 	{0,13,0},		// Time Action 1 - Llum llit fade fast.
@@ -64,7 +99,9 @@ boolean stepdone [numberOfSteps];
 void setup () {
 	// DEBUG
 	Serial.begin(115200);
-	Serial.println ("Projecte Xesca Start...\n");
+	Serial.println ("Projecte Cases Start...\n");
+	Serial.println ("Casa 1\n");
+
 
 	Serial.println (".Setting pins");
 	pinMode (playButton, OUTPUT);
@@ -83,8 +120,7 @@ void setup () {
 
 	Serial.println (".Start neopixels driver");
 	pixels.begin();
-	
-	pixels.setBrightness(255); // 1/3 brightness
+	pixels.setBrightness(BRIGHTNESS); // set brightness of neopixels
 	fullAllLEDS (0xFF0000);
 	delay (1000);
 	fullAllLEDS (0x00FF00);
@@ -126,7 +162,6 @@ void loop () {
 
 		delay(250);
 		unsigned long startTime = millis();		// start counting time
-
 
 
 		// start timing

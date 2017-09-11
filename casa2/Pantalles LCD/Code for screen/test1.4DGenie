@@ -1,0 +1,87 @@
+﻿Version     0.0
+Platform    Gen4-uLCD-50DCT-CLB-L
+PlatRes     480x800
+Depends
+end
+Options
+    Genie
+    Speed                        200000
+    Checksum                     No
+    ResponseSize                 2
+    Multidrop                    No
+    Destination                  1
+    DestBank                     0
+    MainForm                     0
+    SndBuf                       0
+    ButtonDisable                No
+    SignedDigits                 No
+end
+Form
+    Name                         Form0
+    Alias                        Form0
+    Bgtype                       Color
+    Color                        BLACK
+    Image                        (None)
+    Source.Height                0
+    Source.Left                  0
+    Source.Top                   0
+    Source.Width                 0
+    OnActivate                   ''
+    OnCreate                     ''
+    OnRepeat                     ''
+    OnTouchMoving                ''
+    OnTouchPressed               ''
+    OnTouchReleased              ''
+end
+Strings
+    Name                         Strings0
+    Alias                        Strings0
+    Alignment                    Center
+    BGcolor                      BLACK
+    Height                       289
+    FGcolor                      WHITE
+    Font.Bold                    No
+    Font.CharSet                 ANSI
+    Font.Italic                  No
+    Font.Name                    Corbel
+    Font.Opaque                  Yes
+    Font.Size                    60
+    Font.Strikethrough           No
+    Font.Underline               No
+    Left                         92
+    Strings                      'String 0'
+    StringsStyle                 Message
+    Top                          32
+    Width                        645
+    OnChanged                    'Report Message'
+end
+UserButton
+    Name                         Userbutton0
+    Alias                        Userbutton0
+    Height                       57
+    Images                       ''
+    Left                         44
+    Matrix                       -1
+    Momentary                    Yes
+    Stretch                      No
+    Top                          324
+    Width                        149
+    OnChanged                    ''
+end
+Label
+    Name                         Label0
+    Alias                        Label0
+    4DGLFont.Font                FONT1
+    4DGLFont.Bold                No
+    4DGLFont.Italic              No
+    4DGLFont.Inverse             No
+    4DGLFont.Underline           No
+    4DGLFont.MagWidth            1
+    4DGLFont.MagHeight           1
+    4DGLFont.Opaque              Yes
+    BGcolor                      BLACK
+    Caption                      'Button 0'
+    FGcolor                      WHITE
+    Left                         84
+    Top                          352
+end

@@ -15,6 +15,13 @@ This project contains parts of code from:
 ---------------------------------
  4D Systems Displays
 
+ form0 - language selection
+ form1 - instrucctions (strings 0 - 420x740) + slider (slider 0)
+ form2 - black
+ fomr3 - white
+ form4 - instruccions sense slider (string0 - 420x740)
+
+
 ---------------------------------
 Example project by Tom Igoe
 This example code is in the public domain.
@@ -95,6 +102,12 @@ uint32_t startPlay = 0;
 unsigned long trackDuration = 0;
 unsigned long lastRefresh = 0;
 
+// MSG
+uint32_t prevTimeMSG, millisDelayMSG = 0;
+uint32_t ClockPrevTimeMSG, ClockNowMSG = 0;
+unsigned long trackDurationMSG = 0;
+unsigned long lastRefreshMSG = 0;
+
 // Colors effects
 uint32_t color  = 0xFF0000; // Start red
 uint8_t  mode   = 0, // Current animation effect
@@ -112,7 +125,8 @@ boolean pause_play = false;
 
 int lastButtonPressed = 0;
 
-
+#define light_actions 1
+#define msg_actions 2
 
 #define numberOfSteps 18
 int timeActions [numberOfSteps][3] = {
@@ -146,6 +160,35 @@ int timeActions [numberOfSteps][3] = {
 };
 
 boolean stepdone [numberOfSteps];
+
+ //////////////////////////////////////////////////////////////////MSG
+int currentStepMSG = 0;    // start from this step
+unsigned long nextStepTimeMSG = 0;
+
+#define numberOfStepsMSG 17
+int timeActionsMSG [numberOfStepsMSG][3] = {
+  //{minuts,segons,milisegons}
+  {17,4,0},   // Time Action 0 (track duration)
+
+  {0,14,0},   // 1
+  {1,26,0},   // 2
+  {2,2,0},   // 3
+  {3,30,0},   // 4
+  {3,36,0},   // 5
+  {3,54,0},   // 6
+  {5,8,0},   // 7
+  {6,33,0},   // 8
+  {8,4,0},   // 9
+  {8,54,0},   // 10
+  {9,45,0},   // 11
+  {10,29,0},   // 12
+  {11,3,0},   // 13
+  {11,17,0},   // 14
+  {14,24,0},   // 15
+  {15,6,0},   // 16
+};
+
+boolean stepdoneMSG [numberOfStepsMSG];
 
 
 // PINOUT
@@ -217,7 +260,7 @@ void setup() {
 
   // Audio
   Serial.print (".Track Duration: ");
-  trackDuration = convertTime(0);
+  trackDuration = convertTime(0, light_actions);
   Serial.print (trackDuration);
   Serial.println (" milliseconds total");
 
@@ -288,18 +331,21 @@ void loop() {
     delay(250);
     #endif
 
-    startTime = millis();   // start counting time
-    
+
+    currentStep = 0;    // start from this step
+    trackDuration = convertTime(currentStep, light_actions);
+    nextStepTime = convertTime (currentStep+1, light_actions);
+
+    currentStepMSG = 0;    // start from this step
+    trackDurationMSG = convertTime(currentStep, msg_actions);
+    nextStepTimeMSG = convertTime (currentStep+1, msg_actions);
 
     // start timing
+    startTime = millis();   // start counting time
     Serial.print (".Track Duration: ");
-    trackDuration = convertTime(0);
     Serial.print (trackDuration);
     Serial.println (" milliseconds total");
 
-    currentStep = 0;    // start from this step
-
-    nextStepTime = convertTime (currentStep+1);
 
     Serial.println ("Start playing actions.");
     resetCounters (); // Reset variables
@@ -307,38 +353,18 @@ void loop() {
     // Enter into play loop
     while ((millis () - startTime) < trackDuration) {
 
-      // Check serial for other orders
+      // MAIN LOOP CHECK ALL TIMCODES
       CheckSerialControl ();
+      CheckActionLight ();
+      CheckActionsMSG();
+      ///////////////////////////////
 
-      // Check if we need to change to next step
-      if ((millis () - startTime) >= nextStepTime) {
-
-        if (currentStep < numberOfSteps) {
-          currentStep++;
-        }
-        if (currentStep+1 <= numberOfSteps) {
-          nextStepTime = convertTime (currentStep+1);
-        }
-
-        Serial.print ("Trigger step ");
-        Serial.print (currentStep);
-
-        Serial.print (" - Time now: ");
-        Serial.print (millis () - startTime);
-
-        Serial.print (" - Next trig time: ");
-        Serial.println (nextStepTime);
-
-
-      }
       // do what needs to be done in the current step lets keep it at 30fps
       // refresh one time every 33ms
       if (millis () - lastRefresh > refreshRateMs) {
         executeAllCurrentSteps (currentStep);
+        executeAllCurrentStepsMSG (currentStepMSG);
         lastRefresh = millis ();
-        /*
-        Serial.print ("Time now: ");
-        Serial.println (millis () - startTime);*/
       }
     }
     Serial.println ("END of play. \n");
@@ -381,6 +407,56 @@ void loop() {
 }
 
 
+
+void CheckActionLight () {
+  // Check if we need to change to next step
+  if ((millis () - startTime) >= nextStepTime) {
+
+    if (currentStep < numberOfSteps-1) {
+      currentStep++;
+    }
+    if (currentStep+1 <= numberOfSteps-1) {
+      nextStepTime = convertTime (currentStep+1, light_actions);
+    }else{
+      nextStepTime = convertTime (0, light_actions);
+    }
+
+    Serial.print ("Trigger step ");
+    Serial.print (currentStep);
+
+    Serial.print (" - Time now: ");
+    Serial.print (millis () - startTime);
+
+    Serial.print (" - Next trig time: ");
+    Serial.println (nextStepTime);
+  }
+}
+
+
+void CheckActionsMSG () {
+  // Check if we need to change to next step
+  if ((millis () - startTime) >= nextStepTimeMSG) {
+
+    if (currentStepMSG < numberOfStepsMSG-1) {
+      currentStepMSG++;
+    }
+    if (currentStepMSG+1 <= numberOfStepsMSG-1) {
+      nextStepTimeMSG = convertTime (currentStepMSG+1, msg_actions);
+    }else{
+      nextStepTimeMSG = convertTime (0, msg_actions);
+    }
+
+    Serial.print ("Trigger step ");
+    Serial.print (currentStep);
+
+    Serial.print (" - Time now: ");
+    Serial.print (millis () - startTime);
+
+    Serial.print (" - Next trig time: ");
+    Serial.println (nextStepTime);
+  }
+}
+
 /*
   {0,14,0},   // 1 - Llum nit
   {2,06,0},   // 2 - Llum caseta
@@ -400,6 +476,130 @@ void loop() {
 #define bulb mosfet3
 #define LEDCASA mosfet1
 */
+
+
+void executeAllCurrentStepsMSG (int currentStepMSG) {
+  int thisStep =0;
+  if (currentStep >= 0) {   // Avoid triggering on -1
+  //----------------------------------------------------
+
+    thisStep = 1;
+    if (currentStep >=thisStep & !stepdone[thisStep]) {     // Action 0 (from the beginning)
+      SendMessageToScreen (1,"Crea una ciutat amb els objectes de la caixa 1");
+      SendMessageToScreen (2,"Crea una ciutat amb els objectes de la caixa 1");
+      stepdone[thisStep] = true;
+    }
+
+    thisStep = 2;
+    if (currentStep >=thisStep & !stepdone[thisStep]) {     // Action 0 (from the beginning)
+      SendMessageToScreen (1,"Posa l’objecte 2 a la ciutat");
+      stepdone[thisStep] = true;
+    }
+
+    thisStep = 3;
+    if (currentStep >=thisStep & !stepdone[thisStep]) {     // Action 0 (from the beginning)
+      SendMessageToScreen (2,"Fes girar la manivel·la i posa l’objecte 3 a la marca del tauler");
+      stepdone[thisStep] = true;
+    }
+
+    thisStep = 4;
+    if (currentStep >=thisStep & !stepdone[thisStep]) {     // Action 0 (from the beginning)
+      SendMessageToScreen (1,"Col·loca l’objecte 4 a la ciutat");
+      stepdone[thisStep] = true;
+    }
+
+    thisStep = 5;
+    if (currentStep >=thisStep & !stepdone[thisStep]) {     // Action 0 (from the beginning)
+      SendMessageToScreen (1,"Introdueix a la ciutat els objectes 5");
+      stepdone[thisStep] = true;
+    }
+
+    thisStep = 6;
+    if (currentStep >=thisStep & !stepdone[thisStep]) {     // Action 0 (from the beginning)
+      SendMessageToScreen (1,"Puja el gos a dalt d’un edifici");
+      stepdone[thisStep] = true;
+    }
+
+    thisStep = 7;
+    if (currentStep >=thisStep & !stepdone[thisStep]) {     // Action 0 (from the beginning)
+      SendMessageToScreen (2,"Encén la bengala (objecte 6) i aguanta-la sobre la ciutat");
+      stepdone[thisStep] = true;
+    }
+
+    thisStep = 8;
+    if (currentStep >=thisStep & !stepdone[thisStep]) {     // Action 0 (from the beginning)
+      SendMessageToScreen (2,"Fes córrer l’objecte 7 per la ciutat");
+      stepdone[thisStep] = true;
+    }
+
+    thisStep = 9;
+    if (currentStep >=thisStep & !stepdone[thisStep]) {     // Action 0 (from the beginning)
+      SendMessageToScreen (1,"Fes que caigui la neu sobre la ciutat amb l’objecte 8");
+      stepdone[thisStep] = true;
+    }
+
+    thisStep = 10;
+    if (currentStep >=thisStep & !stepdone[thisStep]) {     // Action 0 (from the beginning)
+      SendMessageToScreen (2,"Col·loca l’objecte 9 sota la neu");
+      stepdone[thisStep] = true;
+    }
+
+    thisStep = 11;
+    if (currentStep >=thisStep & !stepdone[thisStep]) {     // Action 0 (from the beginning)
+      SendMessageToScreen (2,"Construeix una casa per a una de les dones");
+      stepdone[thisStep] = true;
+    }
+
+    thisStep = 12;
+    if (currentStep >=thisStep & !stepdone[thisStep]) {     // Action 0 (from the beginning)
+      SendMessageToScreen (1,"Col·loca l’objecte 11 dins la nova casa");
+      stepdone[thisStep] = true;
+    }
+
+    thisStep = 13;
+    if (currentStep >=thisStep & !stepdone[thisStep]) {     // Action 0 (from the beginning)
+      SendMessageToScreen (2,"Introdueix l’objecte 12 a la ciutat i obre la porta del conductor");
+      stepdone[thisStep] = true;
+    }
+
+    thisStep = 14;
+    if (currentStep >=thisStep & !stepdone[thisStep]) {     // Action 0 (from the beginning)
+      SendMessageToScreen (1,"Posa l’objecte 13 al costat del cotxe vermell");
+      stepdone[thisStep] = true;
+    }
+
+    thisStep = 15;
+    if (currentStep >=thisStep & !stepdone[thisStep]) {     // Action 0 (from the beginning)
+      SendMessageToScreen (2,"Introdueix els objectes 14 a la ciutat");
+      stepdone[thisStep] = true;
+    }
+
+    thisStep = 16;
+    if (currentStep >=thisStep & !stepdone[thisStep]) {     // Action 0 (from the beginning)
+      SendMessageToScreen (1,"Obre l’objecte 15 sobre el taulell perquè el puguin llegir");
+      stepdone[thisStep] = true;
+    }
+  }
+}
+
+void SendMessageToScreen (int screen_number, String message_to_send) {
+    //Write a string to the Display to identify each display 
+  // display1.WriteObject(GENIE_OBJ_FORM, 4, 0); //switching to form 4 text without slider
+  // display1.WriteStr(0, "Pantalla 1");
+
+  // display2.WriteObject(GENIE_OBJ_FORM, 4, 0); //switching to form 4 text without slider
+  // display2.WriteStr(0, "Pantalla 2");
+
+  if (screen_number == 1) {
+    display1.WriteObject(GENIE_OBJ_FORM, 3, 0);
+    display1.WriteObject(GENIE_OBJ_FORM, 4, 0);
+    display1.WriteStr(0, message_to_send);
+  }else if (screen_number == 2) {
+    display2.WriteObject(GENIE_OBJ_FORM, 3, 0);
+    display2.WriteObject(GENIE_OBJ_FORM, 4, 0);
+    display2.WriteStr(0, message_to_send);
+  }
+}
 
 void executeAllCurrentSteps (int currentStep) {
   int thisStep =0;
@@ -868,7 +1068,6 @@ boolean efecte_policia () {
 
   GroupColor (1, strip.Color(one,0,two) , 0); //blue
   GroupColor (2, strip.Color(two,0,one) , 0); //red
-
 }
 
 boolean efecte_policia_off () {
@@ -909,12 +1108,16 @@ void Serial4DSystemsBegin () {
   //Set the brightness/Contrast of the Display - (Not needed but illustrates how) 
   //Most Displays, 1 = Display ON, 0 = Display OFF
   //For uLCD-43, uLCD-220RD, uLCD-70DT, and uLCD-35DT, use 0-15 for Brightness Control, where 0 = Display OFF, though to 15 = Max Brightness ON.
-  display1.WriteContrast(15); // Display ON
-  display2.WriteContrast(15); // Display ON
+  display1.WriteContrast(10); // Display ON
+  display2.WriteContrast(10); // Display ON
   
   //Write a string to the Display to identify each display 
+  display1.WriteObject(GENIE_OBJ_FORM, 4, 0); //switching to form 4 text without slider
   display1.WriteStr(0, "Pantalla 1");
+
+  display2.WriteObject(GENIE_OBJ_FORM, 4, 0); //switching to form 4 text without slider
   display2.WriteStr(0, "Pantalla 2");
+
 }
 
 
@@ -934,6 +1137,7 @@ void Serial4DSystemsBegin () {
 // Event Handler Function for Display 1
 void myGenieEventHandler1(void)
 {
+  Serial.println ("event received from screen 1");
   genieFrame Event;
   display1.DequeueEvent(&Event); // Remove the next queued event from the buffer, and process it below
 
@@ -968,6 +1172,7 @@ void myGenieEventHandler1(void)
 // Event Handler Function for Display 2
 void myGenieEventHandler2(void)
 {
+  Serial.println ("event received from screen 2");
   genieFrame Event;
   display2.DequeueEvent(&Event); // Remove the next queued event from the buffer, and process it below
 
@@ -1016,27 +1221,35 @@ void myGenieEventHandler2(void)
 */
 
 // convert time into ms
-unsigned long convertTime (int timeStep) {
+unsigned long convertTime (int timeStep, int array_type) {
 
-  int minutes = timeActions [timeStep][0];
-  int seconds = timeActions [timeStep][1];
-  int milliseconds = timeActions [timeStep][2];
+  int minutes = 0;
+  int seconds = 0;
+  int milliseconds = 0;
+
+  if (array_type == light_actions) {
+    minutes = timeActions [timeStep][0];
+    seconds = timeActions [timeStep][1];
+    milliseconds = timeActions [timeStep][2];
+  }else if (array_type == msg_actions) {
+    minutes = timeActions [timeStep][0];
+    seconds = timeActions [timeStep][1];
+    milliseconds = timeActions [timeStep][2];
+  }else {
+    return 0;
+  }
 
   // Serial.println ("Start time conversion ");
-
   // Serial.print ("minutes: ");
   // Serial.println (minutes);  
   // Serial.print ("seconds: ");
   // Serial.println (seconds);
   // Serial.print ("ms: ");
   // Serial.println (milliseconds);
-
   
   unsigned long seconds_minutes = (minutes*60) + (seconds); 
   unsigned long msSM = seconds_minutes*1000;
-
   unsigned long totalMS =  msSM + milliseconds;
-
 
   // Serial.print ("seconds minutes: ");
   // Serial.println (seconds_minutes);  
@@ -1408,11 +1621,11 @@ void CheckSerialControl () {
         stepdone [g] = 0; 
       }
 
-      nextStepTime = convertTime (currentStep+1);
+      nextStepTime = convertTime (currentStep+1, light_actions);
       if (currentStep == 0) {
         startTime = millis ();
       }else{
-        startTime = millis () - convertTime (currentStep);
+        startTime = millis () - convertTime (currentStep, light_actions);
       }
 
       Serial.print ("Jumped to step: ");
@@ -1436,11 +1649,11 @@ void CheckSerialControl () {
         for (int g = (numberOfSteps-1); g>currentStep; g--) {   // reset counters , makes all future steps not done
           stepdone [g] = 0; 
         }
-        nextStepTime = convertTime (currentStep+1);
+        nextStepTime = convertTime (currentStep+1, light_actions);
         if (currentStep == 0) {
           startTime = millis ();
         }else{
-          startTime = millis () - convertTime (currentStep);
+          startTime = millis () - convertTime (currentStep, light_actions);
         }
       }else{
           startTime = millis ();
@@ -1493,7 +1706,7 @@ void CheckSerialControl () {
     if (currentStep == 0) {
       startTime = millis ();
     }else{
-      startTime = millis () - convertTime (currentStep);
+      startTime = millis () - convertTime (currentStep, light_actions);
     }
   }
 }

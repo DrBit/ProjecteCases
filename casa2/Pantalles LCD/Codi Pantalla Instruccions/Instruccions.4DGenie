@@ -1,0 +1,211 @@
+﻿Version     0.0
+Platform    Gen4-uLCD-50DCT-CLB-L
+PlatRes     480x800
+Depends
+end
+Options
+    Genie
+    Speed                        200000
+    Checksum                     No
+    ResponseSize                 2
+    Multidrop                    No
+    Destination                  0
+    DestBank                     0
+    MainForm                     0
+    SndBuf                       0
+    ButtonDisable                No
+    SignedDigits                 No
+end
+Form
+    Name                         Form0
+    Alias                        Idioma
+    Bgtype                       Color
+    Color                        BLACK
+    Image                        (None)
+    Source.Height                0
+    Source.Left                  0
+    Source.Top                   0
+    Source.Width                 0
+    OnActivate                   ''
+    OnCreate                     ''
+    OnRepeat                     ''
+    OnTouchMoving                ''
+    OnTouchPressed               ''
+    OnTouchReleased              ''
+end
+UserButton
+    Name                         Userbutton0
+    Alias                        cat
+    Height                       480
+    Images                       catala.png
+    Left                         0
+    Matrix                       -1
+    Momentary                    Yes
+    Stretch                      No
+    Top                          0
+    Width                        400
+    OnChanged                    ''
+end
+UserButton
+    Name                         Userbutton1
+    Alias                        eng
+    Height                       480
+    Images                       English.png
+    Left                         400
+    Matrix                       -1
+    Momentary                    Yes
+    Stretch                      No
+    Top                          0
+    Width                        400
+    OnChanged                    ''
+end
+Form
+    Name                         Form1
+    Alias                        'Instruccions slider'
+    Bgtype                       Color
+    Color                        BLACK
+    Image                        (None)
+    Source.Height                0
+    Source.Left                  0
+    Source.Top                   0
+    Source.Width                 0
+    OnActivate                   ''
+    OnCreate                     ''
+    OnRepeat                     ''
+    OnTouchMoving                ''
+    OnTouchPressed               ''
+    OnTouchReleased              ''
+end
+Strings
+    Name                         Strings0
+    Alias                        Text
+    Alignment                    Center
+    BGcolor                      BLACK
+    Height                       420
+    FGcolor                      WHITE
+    Font.Bold                    No
+    Font.CharSet                 ANSI
+    Font.Italic                  No
+    Font.Name                    Calibri
+    Font.Opaque                  Yes
+    Font.Size                    35
+    Font.Strikethrough           No
+    Font.Underline               No
+    Left                         30
+    Strings                      ''
+    StringsStyle                 Message
+    Top                          30
+    Width                        740
+    OnChanged                    ''
+end
+GSlider
+    Name                         Slider0
+    Alias                        slider
+    Bevel.BorderColor            BLACK
+    Bevel.BorderWidth            0
+    Bevel.InnerColor             BLACK
+    Bevel.InnerHighlight         BLACK
+    Bevel.InnerOutline           None
+    Bevel.InnerShadow            BLACK
+    Bevel.InnerSpace             0
+    Bevel.InnerStyle             None
+    Bevel.Innerwidth             3
+    Bevel.OuterColor             BLACK
+    Bevel.OuterHighlight         BLACK
+    Bevel.OuterOutline           Outer
+    Bevel.OuterShadow            BLACK
+    Bevel.OuterSpace             0
+    Bevel.OuterStyle             None
+    Bevel.Outerwidth             1
+    Bevel.Visible                Yes
+    BorderColor                  BLACK
+    BorderWidth                  0
+    Color                        BLACK
+    Height                       20
+    Left                         100
+    Maxvalue                     100
+    Minvalue                     10
+    Orientation                  Horizontal
+    Palette.High                 0xA3A3A3
+    Palette.Low                  0xC5C5C5
+    Spacing                      2
+    SolidFill                    Yes
+    TickWidth                    0
+    Top                          450
+    Width                        600
+    OnChanged                    ''
+    OnChanging                   ''
+end
+Form
+    Name                         Form2
+    Alias                        Black
+    Bgtype                       Color
+    Color                        BLACK
+    Image                        (None)
+    Source.Height                0
+    Source.Left                  0
+    Source.Top                   0
+    Source.Width                 0
+    OnActivate                   ''
+    OnCreate                     ''
+    OnRepeat                     ''
+    OnTouchMoving                ''
+    OnTouchPressed               ''
+    OnTouchReleased              ''
+end
+Form
+    Name                         Form3
+    Alias                        white
+    Bgtype                       Color
+    Color                        WHITE
+    Image                        (None)
+    Source.Height                0
+    Source.Left                  0
+    Source.Top                   0
+    Source.Width                 0
+    OnActivate                   ''
+    OnCreate                     ''
+    OnRepeat                     ''
+    OnTouchMoving                ''
+    OnTouchPressed               ''
+    OnTouchReleased              ''
+end
+Form
+    Name                         Form4
+    Alias                        'Instruccions sol'
+    Bgtype                       Color
+    Color                        BLACK
+    Image                        (None)
+    Source.Height                0
+    Source.Left                  0
+    Source.Top                   0
+    Source.Width                 0
+    OnActivate                   ''
+    OnCreate                     ''
+    OnRepeat                     ''
+    OnTouchMoving                ''
+    OnTouchPressed               ''
+    OnTouchReleased              ''
+end
+Strings
+    Name                         Strings1
+    Alias                        Strings1
+    Alignment                    Left
+    BGcolor                      BLACK
+    Height                       420
+    FGcolor                      WHITE
+    Font.Bold                    No
+    Font.CharSet                 ANSI
+    Font.Italic                  No
+    Font.Name                    Calibri
+    Font.Opaque                  Yes
+    Font.Size                    35
+    Font.Strikethrough           No
+    Font.Underline               No
+    Left                         30
+    Strings                      ''
+    StringsStyle                 Message
+    Top                          30
+    Width                        740
+    OnChanged                    ''
+end

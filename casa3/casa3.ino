@@ -80,34 +80,14 @@ byte counterByte1=0;
 
 Adafruit_NeoPixel pixels = Adafruit_NeoPixel(NUM_LEDS, pixelsPIN, LED_TYPE + NEO_KHZ800);
 
-byte neopix_gamma[] = {
-    0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,
-    0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  1,  1,  1,  1,
-    1,  1,  1,  1,  1,  1,  1,  1,  1,  2,  2,  2,  2,  2,  2,  2,
-    2,  3,  3,  3,  3,  3,  3,  3,  4,  4,  4,  4,  4,  5,  5,  5,
-    5,  6,  6,  6,  6,  7,  7,  7,  7,  8,  8,  8,  9,  9,  9, 10,
-   10, 10, 11, 11, 11, 12, 12, 13, 13, 13, 14, 14, 15, 15, 16, 16,
-   17, 17, 18, 18, 19, 19, 20, 20, 21, 21, 22, 22, 23, 24, 24, 25,
-   25, 26, 27, 27, 28, 29, 29, 30, 31, 32, 32, 33, 34, 35, 35, 36,
-   37, 38, 39, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 50,
-   51, 52, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 66, 67, 68,
-   69, 70, 72, 73, 74, 75, 77, 78, 79, 81, 82, 83, 85, 86, 87, 89,
-   90, 92, 93, 95, 96, 98, 99,101,102,104,105,107,109,110,112,114,
-  115,117,119,120,122,124,126,127,129,131,133,135,137,138,140,142,
-  144,146,148,150,152,154,156,158,160,162,164,167,169,171,173,175,
-  177,180,182,184,186,189,191,193,196,198,200,203,205,208,210,213,
-  215,218,220,223,225,228,231,233,236,239,241,244,247,249,252,255 };
-
-
 // actions timing
-
 int currentStep = 0;		// start from this step
 unsigned long startTime	= 0;	
 unsigned long nextStepTime = 0;
 boolean pause_play = false;
 
-#define numberOfSteps 38
-#define NumberOfLedGroups 12
+#define numberOfSteps 40
+#define NumberOfLedGroups 14
 
 int LedGroups [NumberOfLedGroups][NUM_LEDS] = {
 	//{minuts,segons,milisegons}
@@ -126,11 +106,14 @@ int LedGroups [NumberOfLedGroups][NUM_LEDS] = {
 	{16,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},	// Group 9 - Habitacio bragas NOMES TAULETA
 	{5,6,7,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},	// Group 10 - Nines
 	{8,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},	// Group 11 - Terrat
+	{3,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},	// Group 12 - verja
+	{0,0,0,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25},	// Group 13 - tot meng habitacio miralls
+
 };
 
 int timeActions [numberOfSteps][3] = {
 	//{minuts,segons,milisegons}
-	{10,17,0},		// Time Action 0 (duration)
+	{10,40,0},		// Time Action 0 (duration)
 
 	//----------------------------------------------------
 	// Ronda reconeixement
@@ -154,7 +137,7 @@ int timeActions [numberOfSteps][3] = {
 	{1,29,0},		// Time Action 16 - t10 bragas off
 	{2,05,0},		// Time Action 17 - t12 nines i wc on
 	{2,30,0},		// Time Action 18 - t13 bragues on
-	{2,30,2},		// Time Action 19 - t13 bragues off
+	{2,33,2},		// Time Action 19 - t13 bragues off
 	{2,55,0},		// Time Action 20 - t11 cames off
 	{3,14,0},		// Time Action 21 - t12 nines i wc off
 	{3,15,0},		// Time Action 22 - t14 tauleta i porno
@@ -167,12 +150,14 @@ int timeActions [numberOfSteps][3] = {
 	{5,20,0},		// Time Action 29 - t17 alce off
 	{5,22,0},		// Time Action 30 - t19 terrat
 	{5,23,0},		// Time Action 31 - t18 nines off
-	{5,38,0},		// Time Action 32 - t19 terrat off
-	{5,38,2},		// Time Action 33 - t20 Nines
+	{5,39,0},		// Time Action 32 - t19 terrat off
+	{5,39,2},		// Time Action 33 - t20 Nines
 	{6,8,0},		// Time Action 34 - T21 Terrat
-	{6,23,0},		// Time Action 35 - t20 t21 Nines terrat off
+	{6,21,0},		// Time Action 35 - t20 t21 Nines terrat off
 	{6,23,2},		// Time Action 36 - t22 tot vermell 5 fade
 	{6,53,0},		// Time Action 37 - t22 tot vermell off 
+	{6,53,2},		// Time Action 38 - t23 efecte verge
+	{10,28,0},		// Time Action 39 - t24 fade off
 };
 
 
@@ -228,7 +213,15 @@ void setup () {
 
 }
 
+unsigned long time_ledB = 0;
+int value_ledB = 0;
+
 void loop () {
+
+	int periode = 3000; 
+  	time_ledB = millis();
+  	value_ledB = 128+127*cos(2*PI/periode*time_ledB);
+  	analogWrite(startButtonLED, value_ledB);           // sets the value (range from 0 to 255)
 
 	int buttonPressed = getButtonPressed ();
 	#if defined DEBUG
@@ -240,6 +233,8 @@ void loop () {
 			int a = Serial.read ();
 			delay(5);
 		}
+  		analogWrite(startButtonLED, 0);           // sets the value (range from 0 to 255)
+
 
     	currentStep = 0;    // start from this step
 
@@ -285,11 +280,13 @@ void loop () {
 			// Check if we need to change to next step
 			if ((millis () - startTime) >= nextStepTime) {
 
-				if (currentStep < numberOfSteps) {
+				if (currentStep < numberOfSteps-1) {
 					currentStep++;
 				}
-				if (currentStep+1 <= numberOfSteps) {
+				if (currentStep+1 <= numberOfSteps-1) {
 					nextStepTime = convertTime (currentStep+1);
+				}else{
+					nextStepTime = convertTime (0);
 				}
 
 				Serial.print ("Trigger step ");
@@ -300,8 +297,6 @@ void loop () {
 
 				Serial.print (" - Next trig time: ");
 				Serial.println (nextStepTime);
-
-
 			}
 			// do what needs to be done in the current step lets keep it at 30fps
 			// refresh one time every 33ms
@@ -345,7 +340,7 @@ void executeAllCurrentSteps (int currentStep) {
 		thisStep = 2;
 		if (currentStep >= thisStep & !stepdone[thisStep]) {		// Time Action 2 - t01 possible efecte
 			stepdone[thisStep] = true;
-			// action_done (thisStep);
+			action_done (thisStep);
 		}
 
 
@@ -361,8 +356,10 @@ void executeAllCurrentSteps (int currentStep) {
 		thisStep = 4;		// Leds bragas fast on
 		if (currentStep >= thisStep & !stepdone[thisStep]) {		// Time Action 3 - Llum baix flaix off
 			int a = GroupfadeTo (6,pixels.Color(101,0,18,0),1);
-			stepdone[thisStep] = true;
-			action_done (thisStep);
+			if (a == 1) {
+				stepdone[thisStep] = true;
+				action_done (thisStep);
+			}
 		}
 
 		thisStep = 5;		// Leds wc on (pampallugues)
@@ -377,10 +374,10 @@ void executeAllCurrentSteps (int currentStep) {
 
 		thisStep = 6;		// t04 alce + miralls (no verge)
 		if (currentStep >= thisStep & !stepdone[thisStep]) {		// Time Action 3 - Llum baix flaix off
-			int a =GroupfadeTo (6,nocolor,1);	// borra bragas
+			int a = GroupfadeTo (6,nocolor,1);	// borra bragas
 			// a = a+ GroupfadeTo (2,nocolor,1);   // borra wc
-			a = a+GroupfadeTo (4,pixels.Color(0,0,255,0),1);   // Hab alce
-			a = a+GroupfadeTo (8,pixels.Color(255,0,123,0),1);   // Hab miralls no verge			
+			a = a + GroupfadeTo (4,pixels.Color(0,0,255,0),1);   // Hab alce
+			a = a + GroupfadeTo (8,pixels.Color(255,0,123,0),1);   // Hab miralls no verge			
 			if (a == 3) {
 				stepdone[thisStep] = true;
 				action_done (thisStep);
@@ -411,7 +408,7 @@ void executeAllCurrentSteps (int currentStep) {
 			a = a + GroupfadeTo (8,nocolor,1);   // miralls no verge
 			a = a + GroupfadeTo (11,pixels.Color(255, 0, 0, 16),1);   // terrat
 			a = a + GroupfadeTo (7,pixels.Color(0, 0, 20, 10),1);   // cine
-			a = a + GroupfadeTo (5,pixels.Color(253,0,0,253),1);   // cames
+			a = a + GroupfadeTo (5,pixels.Color(255,0,0,255),1);   // cames
 			if (a == 5) {
 				stepdone[thisStep] = true;
 				action_done (thisStep);
@@ -442,7 +439,7 @@ void executeAllCurrentSteps (int currentStep) {
 		thisStep = 12;		// t09 tauleta on  - alce off
 		if (currentStep >= thisStep & !stepdone[thisStep]) {		// Time Action 3 - Llum baix flaix off
 			int a = GroupfadeTo (4,nocolor,1);   // alce
-			a = a + GroupfadeTo (9,pixels.Color(253, 0, 0, 16),1);   // tauleta nit
+			a = a + GroupfadeTo (9,pixels.Color(255, 0, 0, 16),1);   // tauleta nit
 			if (a == 2) {
 				stepdone[thisStep] = true;
 				action_done (thisStep);
@@ -451,17 +448,17 @@ void executeAllCurrentSteps (int currentStep) {
 
 		thisStep = 13;		// t09 taultea off
 		if (currentStep >= thisStep & !stepdone[thisStep]) {		// Time Action 3 - Llum baix flaix off
-			int a = GroupfadeTo (9,nocolor,1);   // tauleta nit
-			if (a == 1) {
+			// int a = GroupfadeTo (9,nocolor,1);   // tauleta nit
+			// if (a == 1) {
 				stepdone[thisStep] = true;
 				action_done (thisStep);
-			}
+			// }
 		}
 	//----------------------------------------------------
 
 		thisStep = 14;		// t10 bragues
 		if (currentStep >= thisStep & !stepdone[thisStep]) {		// Time Action 3 - Llum baix flaix off
-			int a = GroupfadeTo (6,pixels.Color(101,0,18,0),0);   
+			int a = GroupfadeTo (6,pixels.Color(101,0,18,0),1);   
 			if (a == 1) {
 				stepdone[thisStep] = true;
 				action_done (thisStep);
@@ -471,14 +468,14 @@ void executeAllCurrentSteps (int currentStep) {
 		thisStep = 15;		// t11 cames flash blanc
 		if (currentStep >= thisStep & !stepdone[thisStep]) {		// Time Action 3 - Llum baix flaix off
 			// GroupColor (5,pixels.Color(253,0,0,253),0); 
-			StrobeCames (pixels.Color(253,0,0,253), pixels.Color(0,0,0,0));
+			StrobeCames (pixels.Color(255,0,0,255), pixels.Color(0,0,0,0), pixels.Color(0,0,255,0));
 			// stepdone[thisStep] = true;
 			// action_done (thisStep);
 		}
 
 		thisStep = 16;		// t10 bragues
 		if (currentStep >= thisStep & !stepdone[thisStep]) {		// Time Action 3 - Llum baix flaix off
-			int a = GroupfadeTo (5,nocolor,0);  
+			int a = GroupfadeTo (5,nocolor,1);  
 			if (a == 1) {
 				stepdone[thisStep] = true;
 				action_done (thisStep);
@@ -487,7 +484,9 @@ void executeAllCurrentSteps (int currentStep) {
 
 		thisStep = 17;		// t12 nines i wc
 		if (currentStep >= thisStep & !stepdone[thisStep]) {		// Time Action 3 - Llum baix flaix off
-			int a = GroupfadeTo (10,pixels.Color(101,0,18,0),0);  // nines
+			int a = GroupfadeTo (10,pixels.Color(101,0,18,0),1);  // nines
+			a = GroupfadeTo (1,pixels.Color(101,0,18,0),1);  // miralls
+
 			// GroupColor (2,pixels.Color(0,190,93,64),0); // WC efecte fluorescent 
 			if (a == 1) {
 				stepdone[thisStep] = true;
@@ -497,7 +496,7 @@ void executeAllCurrentSteps (int currentStep) {
 
 		thisStep = 18;		// t13 bragues on
 		if (currentStep >= thisStep & !stepdone[thisStep]) {		// Time Action 3 - Llum baix flaix off
-			int a = GroupfadeTo (6,pixels.Color(253, 0, 0, 16),0);  
+			int a = GroupfadeTo (6,pixels.Color(255, 0, 0, 16),1);  
 			if (a == 1) {
 				stepdone[thisStep] = true;
 				action_done (thisStep);
@@ -506,7 +505,7 @@ void executeAllCurrentSteps (int currentStep) {
 
 		thisStep = 19;		// t13 bragues off
 		if (currentStep >= thisStep & !stepdone[thisStep]) {		// Time Action 3 - Llum baix flaix off
-			int a = GroupfadeTo (6,nocolor,0);  
+			int a = GroupfadeTo (6,nocolor,1);  
 			if (a == 1) {
 				stepdone[thisStep] = true;
 				action_done (thisStep);
@@ -516,9 +515,11 @@ void executeAllCurrentSteps (int currentStep) {
 
 		thisStep = 20;		// t11 cames off
 		if (currentStep >= thisStep & !stepdone[thisStep]) {		// Time Action 3 - Llum baix flaix off
-			int a = GroupfadeTo (5,nocolor,0);  
-			stepdone[15] = true;			// acaba flash cames anterior
-			action_done (15);
+			int a = GroupfadeTo (5,nocolor,1);
+			if (!stepdone[15]) {
+				stepdone[15] = true;			// acaba flash cames anterior
+				action_done (15);
+			}
 			if (a == 1) {
 				stepdone[thisStep] = true;
 				action_done (thisStep);
@@ -527,7 +528,8 @@ void executeAllCurrentSteps (int currentStep) {
 
 		thisStep = 21;		// t12 nines i wc off
 		if (currentStep >= thisStep & !stepdone[thisStep]) {		// Time Action 3 - Llum baix flaix off
-			int a = GroupfadeTo (10,nocolor,0);  
+			int a = GroupfadeTo (10,nocolor,1); 
+			a = GroupfadeTo (1,nocolor,1);  // miralls
 			// GroupColor (2,nocolor,0); // WC efecte fluorescent 
 			if (a == 1) {
 				stepdone[thisStep] = true;
@@ -538,8 +540,8 @@ void executeAllCurrentSteps (int currentStep) {
 
 		thisStep = 22;		// t14 tauleta i porno
 		if (currentStep >= thisStep & !stepdone[thisStep]) {		// Time Action 3 - Llum baix flaix off
-			int a = GroupfadeTo (9, pixels.Color(101,0,18,0),0);  // tauleta
-			a = a + GroupfadeTo (7, pixels.Color(101,0,18,0),0);  // cine
+			int a = GroupfadeTo (9, pixels.Color(0,18,18,150),1);  // tauleta
+			a = a + GroupfadeTo (7, pixels.Color(101,0,18,0),1);  // cine
 			if (a == 2) {
 				stepdone[thisStep] = true;
 				action_done (thisStep);
@@ -548,7 +550,7 @@ void executeAllCurrentSteps (int currentStep) {
 
 		thisStep = 23;		// t15 bragues
 		if (currentStep >= thisStep & !stepdone[thisStep]) {		// Time Action 3 - Llum baix flaix off
-			int a = GroupfadeTo (6, pixels.Color(101,0,0,253),0);  // bragues
+			int a = GroupfadeTo (6, pixels.Color(101,0,0,255),1);  // bragues
 			if (a == 1) {
 				stepdone[thisStep] = true;
 				action_done (thisStep);
@@ -572,20 +574,20 @@ void executeAllCurrentSteps (int currentStep) {
 
 		thisStep = 26;		// t17 Alce
 		if (currentStep >= thisStep & !stepdone[thisStep]) {		// Time Action 3 - Llum baix flaix off
-			int a = GroupfadeTo (6, pixels.Color(101,0,0,253),0);  // bragues
-			if (a == 1) {
-				stepdone[thisStep] = true;
-				action_done (thisStep);
-			}
+			PulseGroup(4,pixels.Color(255,255,255,0),pixels.Color(0,0,255,0), 6000);
+
+			// int a = GroupfadeTo (6, pixels.Color(101,0,0,255),1);  // bragues
+			// if (a == 1) {
+			// 	stepdone[thisStep] = true;
+			// 	action_done (thisStep);
+			// }
 		}
 	//----------------------------------------------------
 
 		thisStep = 27;		// t14 t15 off
 		if (currentStep >= thisStep & !stepdone[thisStep]) {		// Time Action 3 - Llum baix flaix off
-			int a = GroupfadeTo (9, nocolor,0);  // t14 bragas tauleta
-			a = 1 + GroupfadeTo (7, nocolor,0);  // t14
-			a = 1 + GroupfadeTo (6, nocolor,0);  // t15 bragas total
-			if (a == 3) {
+			int a = GroupfadeTo (7, nocolor,3);  // t14
+			if (a == 1) {
 				stepdone[thisStep] = true;
 				action_done (thisStep);
 			}
@@ -593,7 +595,7 @@ void executeAllCurrentSteps (int currentStep) {
 
 		thisStep = 28;		// t19 nines
 		if (currentStep >= thisStep & !stepdone[thisStep]) {		
-			int a = GroupfadeTo (10, pixels.Color(255,255,255),0);  // nines
+			int a = GroupfadeTo (10, pixels.Color(255,255,255),1);  // nines
 			if (a == 1) {
 				stepdone[thisStep] = true;
 				action_done (thisStep);
@@ -602,6 +604,10 @@ void executeAllCurrentSteps (int currentStep) {
 
 		thisStep = 29;		// t17 alce off
 		if (currentStep >= thisStep & !stepdone[thisStep]) {
+			if (!stepdone[26]) {
+				stepdone[26] = true;
+				action_done (26);
+			}
 			int a = GroupfadeTo (4, nocolor,1);  // alces
 			if (a == 1) {
 				stepdone[thisStep] = true;
@@ -611,8 +617,7 @@ void executeAllCurrentSteps (int currentStep) {
 
 		thisStep = 30;		// t19 terrat
 		if (currentStep >= thisStep & !stepdone[thisStep]) {
-			int a = GroupfadeTo (11,pixels.Color(253,0,0,16),1);
-			stepdone[thisStep] = true;
+			int a = GroupfadeTo (11,pixels.Color(0,0,255,0),1);
 			if (a == 1) {
 				stepdone[thisStep] = true;
 				action_done (thisStep);
@@ -622,7 +627,6 @@ void executeAllCurrentSteps (int currentStep) {
 		thisStep = 31;		// t18 nines off
 		if (currentStep >= thisStep & !stepdone[thisStep]) {
 			int a = GroupfadeTo (10, nocolor,1);  // nines
-			stepdone[thisStep] = true;
 			if (a == 1) {
 				stepdone[thisStep] = true;
 				action_done (thisStep);
@@ -632,25 +636,25 @@ void executeAllCurrentSteps (int currentStep) {
 		thisStep = 32;		// t19 terrat off
 		if (currentStep >= thisStep & !stepdone[thisStep]) {
 			int a = GroupfadeTo (11,nocolor,1);
-			stepdone[thisStep] = true;
 			if (a == 1) {
 				stepdone[thisStep] = true;
 				action_done (thisStep);
 			}
 		}
 
-		thisStep = 33;		// t20 nines
+		thisStep = 33;		// t20 nines + bragues
 		if (currentStep >= thisStep & !stepdone[thisStep]) {
 			int a = GroupfadeTo (10,pixels.Color(255,255,255,0),1);
-			stepdone[thisStep] = true;
-			if (a == 1) stepdone[thisStep] = true;
-			action_done (thisStep);
+			a = a + GroupfadeTo (6, nocolor,1);  // t14 bragas tauleta
+			if (a == 2) {
+				stepdone[thisStep] = true;
+				action_done (thisStep);
+			}
 		}
 
 		thisStep = 34;		// t21 Terrat
 		if (currentStep >= thisStep & !stepdone[thisStep]) {
 			int a = GroupfadeTo (11,pixels.Color(0,0,255,0),1);
-			stepdone[thisStep] = true;
 			if (a == 1) {
 				stepdone[thisStep] = true;
 				action_done (thisStep);
@@ -661,7 +665,6 @@ void executeAllCurrentSteps (int currentStep) {
 		if (currentStep >= thisStep & !stepdone[thisStep]) {
 			int a = GroupfadeTo (11,nocolor,1);
 			a = a + GroupfadeTo (10,nocolor,1);
-			stepdone[thisStep] = true;
 			if (a == 2) {
 				stepdone[thisStep] = true;
 				action_done (thisStep);
@@ -674,8 +677,10 @@ void executeAllCurrentSteps (int currentStep) {
 		thisStep = 36;		// t22 tot vermell
 		if (currentStep >=thisStep & !stepdone[thisStep]) {	
 			// Para WC ***************
-			stepdone[5] = true;
-			action_done (5);		
+			if (!stepdone[5]){
+				stepdone[5] = true;
+				action_done (5);
+			}		
 			// Para WC ***************
 			int a = GroupfadeTo (0,pixels.Color(255,0,0,0),5);
 			if (a == 1) {
@@ -686,93 +691,40 @@ void executeAllCurrentSteps (int currentStep) {
 
 		thisStep = 37;
 		if (currentStep >= thisStep & !stepdone[thisStep]) {		// Time Action 3 - t01 vermell fade off
-			int a = GroupfadeTo (0,nocolor,5);
+			int a = GroupfadeTo (13,nocolor,5);
+			a = a + GroupfadeTo (1,pixels.Color(255,0,123,0),8);
+			if (a == 2) {
+				stepdone[thisStep] = true;
+				action_done (thisStep);
+			}
+		}
+
+		thisStep = 38;
+		if (currentStep >= thisStep & !stepdone[thisStep]) {		// Time Action 3 - t01 vermell fade off
+			PulseGroup(12,pixels.Color(255,0,0,0),pixels.Color(0,0,0,255), 2000);
+		}
+
+		thisStep = 39;
+		if (currentStep >= thisStep & !stepdone[thisStep]) {		// Time Action 3 - t01 vermell fade off
+			if (!stepdone[38]) {
+				stepdone[38] = true;
+				action_done (38);
+			}
+			// Serial.println ("test");
+			int a = GroupfadeTo (0,nocolor,8);
 			if (a == 1) {
 				stepdone[thisStep] = true;
 				action_done (thisStep);
 			}
 		}
 
-/*
-// Group 0 - tots els dels
-// Group 1 - Habitacio ventilador
-// Group 2 - Toilet
-// Group 3 - Habitacio nines
-// Group 4 - Habitacio alce
-// Group 5 - Habitacio cames
-// Group 6 - Habitacio bragas
-// Group 7 - Cine
-// Group 8 - Habitacio ventilador NO VERGE
-// Group 9 - Habitacio bragas NOMES TAULETA
-
-
-led 4 bany
-led 8 terrat
-
-
-		thisStep = 4;
-		if (currentStep >=thisStep & !stepdone[thisStep]) {		// Time Action 4 - Llum baix flaix on
-			int a = fadeTo (8,color_baix,100);
-			Serial.print ("action "); Serial.println (thisStep);
-			if (a == 1) stepdone[thisStep] = true;
-		}
-
-		thisStep = 5;
-		if (currentStep >= thisStep & !stepdone[thisStep]) {		// Time Action 5 - Llum baix flaix off
-			Serial.print ("action "); Serial.println (thisStep);
-			int a = fadeTo (8,0x000000,100);
-			if (a == 1) stepdone[thisStep] = true;
-		}
-
-
-//----------------------------------------------------
-
-		thisStep = 9;
-		if (currentStep >= thisStep & !stepdone[thisStep]) {		// Time Action 8 - Llum baix fade in 4s
-			Serial.print ("action "); Serial.println (thisStep);
-			int a = fadeTo (5,color_blanc_dalt,80);
-			a = a + fadeTo (6,color_blanc_dalt,80);
-			if (a == 2) stepdone[thisStep] = true;
-		}
-
-		// {0,40,0},		// Time Action 10 - tots focos DALT vermells (fade 3s)
-		thisStep = 10;
-		if (currentStep >= thisStep & !stepdone[thisStep]) {		// Time Action 8 - Llum baix fade in 4s
-			Serial.print ("action "); Serial.println (thisStep);
-			int a = fadeTo (0,color_vermell_dalt,1);
-			a = a + fadeTo (1,color_vermell_dalt,1);
-			a = a + fadeTo (2,color_vermell_dalt,1);
-			a = a + fadeTo (3,color_vermell_dalt,1);
-			a = a + fadeTo (4,color_vermell_dalt,1);
-			a = a + fadeTo (5,color_vermell_dalt,1);
-			a = a + fadeTo (6,color_vermell_dalt,1);
-			if (a == 7) stepdone[thisStep] = true;
-		}
-
-		//{0,50,0},		// Time Action 11 - FX 1
-		thisStep = 11;
-		if (currentStep >= thisStep & !stepdone[thisStep]) {		// Time Action 8 - Llum baix fade in 4s
-			Serial.print ("action "); Serial.println (thisStep);
-			int rnum = random(3);
-			if (rnum == 1) theaterChase(0x0000FF, 50);
-			if (rnum == 2) theaterChase(0x00FF00, 50);
-
-		}
-
-		//{0,50,0},		// Time Action 12 - FX 2
-		thisStep = 12;
-		if (currentStep >= thisStep & !stepdone[thisStep]) {		// Time Action 8 - Llum baix fade in 4s
-			stepdone[11] = true;
-			Serial.print ("action "); Serial.println (thisStep);
-			Strobe(100, 100, 1);
-			//randomPixels(520);
-		}
-*/
 		//----------------------------------------------------
 
 		pixels.show();
 	}
 }
+
+
 
 // example colling this funciton: fadeTo ( 0, NUM_ELEM(name_of_array) ); 
 boolean GroupColor (int ledGroupindex, uint32_t newColor, uint32_t dummy) {
@@ -1349,16 +1301,124 @@ void StrobeWC(uint32_t color_on,uint32_t color_off) {
   }
 }
 
-void StrobeCames(uint32_t color_on,uint32_t color_off) {
-  int periode = 600; 
+
+boolean special_activated = 0;
+
+void StrobeCames(uint32_t color_on,uint32_t color_off,uint32_t color_special) {
+  int periode = 800; 
+  int periode2 = 100; 
   long timing = millis();
   int one = 128+127*cos(2*PI/periode*timing);
+  int two = 128+127*cos(2*PI/periode2*timing);
+
 
   if (one > (100 + random (50))) {
-  	GroupColor (5, color_on,0);	// cames
+  	if(random (20) == 3 && special_activated == false) {
+  		special_activated = true;
+  	}
+  	if (special_activated) {
+  		if (two > (100 + random (50))) {
+  			GroupColor (5, color_special,0);	// cames
+  		}else{
+  			GroupColor (5, color_off,0);	// cames
+  		}
+  	}else{
+  		GroupColor (5, color_on,0);	// cames
+  	}
   }else{
   	GroupColor (5, color_off,0);	// cames
+  	special_activated = false;
   }
+}
+
+void PulseGroup (int group, uint32_t color_on,uint32_t color_off, int periode) {
+  // int periode = 600; 
+  long timing = millis();
+  int wave = 128+127*cos(2*PI/periode*timing);
+
+	uint8_t
+		r_on = 0,
+		g_on = 0,
+		b_on = 0,
+		w_on = 0,
+  		//-----------------
+		r_off = 0,
+		g_off = 0,
+		b_off = 0,
+		w_off = 0;
+
+	
+	if (LED_TYPE == NEO_GRBW) {			// IF RGBW
+  		r_on = (uint8_t)(color_on >> 16);
+  		g_on = (uint8_t)(color_on >> 8);
+  		b_on = (uint8_t)(color_on);
+  		w_on = (uint8_t)(color_on >> 24);
+  		//-----------------
+   		r_off = (uint8_t)(color_off >> 16);
+		g_off = (uint8_t)(color_off >> 8);
+		b_off = (uint8_t)(color_off);
+		w_off = (uint8_t)(color_off >> 24);
+	}else{								// RGB				
+  		r_on = (uint8_t)(color_on >> 16);
+  		g_on = (uint8_t)(color_on >>  8);
+  		b_on = (uint8_t)color_on;
+  		//-----------------
+  		r_off = (uint8_t)(color_off >> 16);
+		g_off = (uint8_t)(color_off >>  8);
+		b_off = (uint8_t)color_off;
+    }
+
+	uint8_t new_r = map(wave, 0, 255, r_on, r_off);
+	uint8_t new_g = map(wave, 0, 255, g_on, g_off);
+	uint8_t new_b = map(wave, 0, 255, b_on, b_off);
+	uint8_t new_w = map(wave, 0, 255, w_on, w_off);
+
+	GroupColor (group, pixels.Color (new_r,new_g,new_b,new_w),0);
+}
+
+void FadeAlce(uint32_t color_on,uint32_t color_off, int periode) {
+  // int periode = 600; 
+  long timing = millis();
+  int wave = 128+127*cos(2*PI/periode*timing);
+
+	uint8_t
+		r_on = 0,
+		g_on = 0,
+		b_on = 0,
+		w_on = 0,
+  		//-----------------
+		r_off = 0,
+		g_off = 0,
+		b_off = 0,
+		w_off = 0;
+
+	
+	if (LED_TYPE == NEO_GRBW) {			// IF RGBW
+  		r_on = (uint8_t)(color_on >> 16);
+  		g_on = (uint8_t)(color_on >> 8);
+  		b_on = (uint8_t)(color_on);
+  		w_on = (uint8_t)(color_on >> 24);
+  		//-----------------
+   		r_off = (uint8_t)(color_off >> 16);
+		g_off = (uint8_t)(color_off >> 8);
+		b_off = (uint8_t)(color_off);
+		w_off = (uint8_t)(color_off >> 24);
+	}else{								// RGB				
+  		r_on = (uint8_t)(color_on >> 16);
+  		g_on = (uint8_t)(color_on >>  8);
+  		b_on = (uint8_t)color_on;
+  		//-----------------
+  		r_off = (uint8_t)(color_off >> 16);
+		g_off = (uint8_t)(color_off >>  8);
+		b_off = (uint8_t)color_off;
+    }
+
+	uint8_t new_r = map(wave, 0, 255, r_on, r_off);
+	uint8_t new_g = map(wave, 0, 255, g_on, g_off);
+	uint8_t new_b = map(wave, 0, 255, b_on, b_off);
+	uint8_t new_w = map(wave, 0, 255, w_on, w_off);
+
+	GroupColor (12, pixels.Color (new_r,new_g,new_b,new_w),0);
 }
 
 void resetCounters () {
@@ -1440,31 +1500,34 @@ void CheckSerialControl () {
 		char a = Serial.read ();
 
 		if (a == 's') {		// s es de seguent
-			currentStep++;	
+			if (currentStep < numberOfSteps) {
 
-			for (int g = 0; g<currentStep; g++) {		// reset counters , makes all previous steps done
-				stepdone [g] = 1;	
+				currentStep++;	
+
+				for (int g = 0; g<currentStep; g++) {		// reset counters , makes all previous steps done
+					stepdone [g] = 1;	
+				}
+
+				for (int g = (numberOfSteps-1); g>currentStep; g--) {		// reset counters , makes all future steps not done
+					stepdone [g] = 0;	
+				}
+
+				nextStepTime = convertTime (currentStep+1);
+				if (currentStep == 0) {
+					startTime = millis ();
+				}else{
+					startTime = millis () - convertTime (currentStep);
+				}
+
+				Serial.print ("Jumped to step: ");
+				Serial.print (currentStep);
+
+				Serial.print (" - Time now: ");
+				Serial.print (millis () - startTime);
+
+				Serial.print (" - Next trig time: ");
+				Serial.println (nextStepTime);
 			}
-
-			for (int g = (numberOfSteps-1); g>currentStep; g--) {		// reset counters , makes all future steps not done
-				stepdone [g] = 0;	
-			}
-
-			nextStepTime = convertTime (currentStep+1);
-			if (currentStep == 0) {
-				startTime = millis ();
-			}else{
-				startTime = millis () - convertTime (currentStep);
-			}
-
-			Serial.print ("Jumped to step: ");
-			Serial.print (currentStep);
-
-			Serial.print (" - Time now: ");
-			Serial.print (millis () - startTime);
-
-			Serial.print (" - Next trig time: ");
-			Serial.println (nextStepTime);
 		}
 
 		if (a == 'a') {		// a de anterior
@@ -1644,36 +1707,3 @@ void TEST_LEDS () {
 
 	//delay (3000);
 }
-
-/*
-// Check if we need to change to next step
-			if ((millis () - startTime) >= nextStepTime) {
-
-				if (currentStep < numberOfSteps) {
-					currentStep++;
-				}
-				if (currentStep+1 <= numberOfSteps) {
-					nextStepTime = convertTime (currentStep+1);
-				}
-
-				Serial.print ("Trigger step ");
-				Serial.print (currentStep);
-
-				Serial.print (" - Time now: ");
-				Serial.print (millis () - startTime);
-
-				Serial.print (" - Next trig time: ");
-				Serial.println (nextStepTime);
-
-
-			}
-			// do what needs to be done in the current step lets keep it at 30fps
-			// refresh one time every 33ms
-			if (millis () - lastRefresh > refreshRateMs) {
-				executeAllCurrentSteps (currentStep);
-				lastRefresh = millis ();
-				
-				Serial.print ("Time now: ");
-				Serial.println (millis () - startTime);
-			}
-*/
